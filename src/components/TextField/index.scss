@@ -1,0 +1,22 @@
+$text-field-height: 35px;
+$text-field-padding: 5px 10px;
+
+.text_field {
+  height: $text-field-height;
+  font-size: 16px;
+  font-weight: 400;
+  padding: $text-field-padding;
+  border: 1px solid black;
+  border-radius: 3px;
+  background: #fbfbfb;
+
+  &::placeholder {
+    color: darkgray;
+  }
+
+  &:focus {
+    outline: 0;
+    border-color: blue;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 6px rgba(123, 184, 245, 0.6);
+  }
+}

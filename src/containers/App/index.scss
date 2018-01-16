@@ -1,0 +1,47 @@
+@import '../../constants/core';
+.latest-versions-page {
+    .library-input-field {
+        margin: 10px;
+    }
+    .hot-library-item {
+        color: green;
+    }
+}
+
+.latest-libary-versions-list {
+    padding: 0 20px;
+    
+    .library-latest-item {
+        margin: 5px;
+        padding: 10px;
+        list-style: none;
+        border-radius: 5px;
+        box-shadow: 0 0 5px 4px rgba(0, 0, 0, 0.05);
+        background: #ffffff24;
+        transition: box-shadow 0.3s ease, background-color 0.3s ease;
+        animation: slide-in 0.3s ease-out;
+        &:hover {
+            box-shadow: 0 0 40px 10px rgba(0, 0, 0, 0.1);
+            background: #ffffff54;
+        }
+    }
+    .library-latest-title {
+        margin: 5px 0;
+    }
+    .library-latest-version-data {
+        margin: 10px 0;
+    }
+
+    @keyframes slide-in {
+        0% {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+

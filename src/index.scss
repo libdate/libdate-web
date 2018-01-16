@@ -1,0 +1,17 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background: #c9d5e0;
+}
+
+body,
+html,
+#root,
+.page {
+    height: 100%;
+}
+
+.page {
+    overflow: auto;
+}
