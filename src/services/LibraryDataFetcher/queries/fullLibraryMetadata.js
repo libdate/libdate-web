@@ -5,6 +5,7 @@ export default library => `
       current_version
       source
       description
+      githubUrl
       releases {
         date
         version

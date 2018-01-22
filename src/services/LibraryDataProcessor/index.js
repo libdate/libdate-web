@@ -8,7 +8,7 @@ export default function processLibaryData(library) {
 }
 
 export function processFullLibraryData(libraryData) {
-    let processedLibrary = libraryData;
+    let processedLibrary = libraryData.library;
 
     processedLibrary.releases = processedLibrary.releases.map(currRelease => {
         currRelease.date = processVersionDate(currRelease.date);
