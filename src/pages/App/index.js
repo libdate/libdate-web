@@ -59,7 +59,7 @@ class App extends Component {
 
   addLibrary() {
     const { libraries, libraryInput } = this.state;
-    const newLibraries = [...libraries, libraryInput];
+    const newLibraries = [...libraries, libraryInput.toLowerCase()];
 
     this.subscriptionStorageService.saveSubscriptions(newLibraries);
     this.setState({ libraries: newLibraries });
