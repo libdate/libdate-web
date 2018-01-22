@@ -1,0 +1,65 @@
+@import '../../mixins/backgroundImage';
+.library-info-page {
+    padding: 0 10px;
+    .library-header {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+    .breadcrumbs {
+        a {
+            text-decoration: none;
+        }
+    }
+    .library-links {
+        li {
+            list-style: none;
+        }
+    }
+    .library-github-link {
+        @include background-image('/assets/images/github_logo');
+        height: 32px;
+        width: 32px;
+        display: inline-block;
+    }
+    section {
+        margin: 30px 0;
+    }
+    .library-releases-container {
+        padding: 5px;
+        .library-release-item {
+            background: rgba(255, 255, 255, 0.30);
+            padding: 15px;
+            border-radius: 3px;
+            transition: margin 0.4s ease;
+            margin-bottom: 15px;
+            transition: box-shadow 0.5s ease-out, background-color 0.5s ease-out;
+            &:hover {
+                box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.05);
+                background: #ffffff54;
+            }
+            .library-release-content {
+                transition: opacity 0.4s ease;
+                opacity: 0;
+                margin-top: 15px;
+            }
+            &.library-release-item-open {
+                margin-bottom: 20px;
+                .library-release-content {
+                    opacity: 1;
+                }
+            }
+        }
+        .release-description-markdown {
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                font-size: initial;
+                margin: 10px 0;
+            }
+        }
+    }
+}
