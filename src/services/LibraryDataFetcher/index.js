@@ -21,8 +21,10 @@ export default class LibraryDataFetcher {
 
     async fetchLibraryVersions(libraries) {
         let librariesQuery = `{
-            ${libraries.map(currLibrary => `${_.camelCase(currLibrary)}: ${latestVersion(currLibrary.toLowerCase)}`)}
+            ${libraries.map(currLibrary => `${_.camelCase(currLibrary)}: ${latestVersion(currLibrary.toLowerCase())}`)}
         }`;
+
+        console.log(librariesQuery)
         
         const { data } = await this.graphQL.query(trimQuery(librariesQuery));
     
