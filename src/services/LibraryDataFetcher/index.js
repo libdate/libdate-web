@@ -23,8 +23,6 @@ export default class LibraryDataFetcher {
         let librariesQuery = `{
             ${libraries.map(currLibrary => `${_.camelCase(currLibrary)}: ${latestVersion(currLibrary.toLowerCase())}`)}
         }`;
-
-        console.log(librariesQuery)
         
         const { data } = await this.graphQL.query(trimQuery(librariesQuery));
     
