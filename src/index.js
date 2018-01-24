@@ -8,7 +8,7 @@ import AccountService from './services/AccountService/index';
 
 let accountService = new AccountService();
 accountService.init();
-accountService.login();
+// accountService.checkLogin();
 
 ReactDOM.render(
     <BrowserRouter>
