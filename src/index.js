@@ -4,6 +4,11 @@ import './index.scss';
 import { BrowserRouter, Route } from 'react-router-dom'
 import App from './pages/App';
 import LibraryInfoPage from './pages/LibraryInfoPage';
+import AccountService from './services/AccountService/index';
+
+let accountService = new AccountService();
+accountService.init();
+accountService.login();
 
 ReactDOM.render(
     <BrowserRouter>
