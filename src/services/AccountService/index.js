@@ -15,14 +15,27 @@ export default class AccountService {
     constructor(onLogin, _window = window) {
         this.window = _window;
         this.tokenService = new GithubTokenService();
+        this.hasInitialized = false;
+    }
+
+    static getInstance() {
+        if (!AccountService.__instance) {
+            AccountService.__instance = new AccountService();
+        }
+
+        return AccountService.__instance;
     }
 
     init(onFinish) {
-        firebase.initializeApp(FIREBASE_CONFIG);
-        this.db = firebase.firestore();
-        window.firebase = firebase;
+        if (!this.hasInitialized) {
+            firebase.initializeApp(FIREBASE_CONFIG);
+            this.db = firebase.firestore();
+            window.firebase = firebase;
 
-        firebase.auth().onAuthStateChanged(() => this.checkLogin(onFinish));
+            firebase.auth().onAuthStateChanged(() => this.checkLogin(onFinish));
+        } else {
+            onFinish();
+        }
     }
 
     checkLogin(onFinish) {
@@ -35,7 +48,7 @@ export default class AccountService {
                 } else if (!user) {
                     this.login();
                 } else {
-                    this.getUserToken(user).then(token => this.tokenService.saveToken(token));
+                    this.getUserToken(user).then(token => this.finishInitilization(token));
                     onFinish();
                 }
             });
@@ -77,7 +90,14 @@ export default class AccountService {
             user,
             githubToken,
         }).then(() => {
-            this.tokenService.saveToken(githubToken);
+            this.finishInitilization(githubToken);
         }).catch(error => console.error(error));
     }
+
+    finishInitilization(githubToken) {
+        this.tokenService.saveToken(githubToken);
+        this.hasInitialized = true;
+    }
 }
+
+AccountService.__instance = null;

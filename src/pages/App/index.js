@@ -9,14 +9,13 @@ import LibraryDataFetcher from './../../services/LibraryDataFetcher';
 import {
   flattenLatestMetadata
 } from '../../services/LibraryDataExtractors';
-import AccountService from '../../services/AccountService/index';
+import AccountService from '../../services/AccountService';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.subscriptionStorageService = new SubscriptionStorageService();
     this.libraryDataFetcher = new LibraryDataFetcher();
-    this.accountService = new AccountService();
 
     this.state = {
       versions: [],
@@ -33,7 +32,7 @@ class App extends Component {
 
   componentDidMount() {
     if (!_.isEmpty(this.state.libraries)) {
-      this.accountService.init(() => {
+      AccountService.getInstance().init(() => {
         this.updateVersionData(this.state.libraries);
       });
     }
