@@ -1,36 +1,32 @@
 import GraphQLClient from 'graphql-client';
-import latestVersion from './queries/latestVersion';
+import latestVersions from './queries/latestVersions';
 import { SERVER_GRAPHQL } from '../../constants/server.const';
 import { processLibrariesData, processFullLibraryData } from '../LibraryDataProcessor';
-import _ from 'lodash';
 import fullLibraryMetadata from './queries/fullLibraryMetadata';
 import { trimQuery } from './queryProcessor';
+import { GithubTokenService } from '../GithubTokenService';
 
 export default class LibraryDataFetcher {
     constructor() {
         this.graphQL = new GraphQLClient({
             url: SERVER_GRAPHQL
         });
+        this.tokenService = new GithubTokenService();
     }
 
-    async fetchLatestVersion(libraryName) {
-        const { data } = await this.graphQL.query(latestVersion(libraryName));
-
-        return data;
+    requestQuery(query) {
+        let tokenedQuery = query.replace('$token', this.tokenService.getToken());
+        return this.graphQL.query(tokenedQuery);
     }
 
     async fetchLibraryVersions(libraries) {
-        let librariesQuery = `{
-            ${libraries.map(currLibrary => `${_.camelCase(currLibrary)}: ${latestVersion(currLibrary.toLowerCase())}`)}
-        }`;
-        
-        const { data } = await this.graphQL.query(trimQuery(librariesQuery));
+        const { data} = await this.requestQuery(trimQuery(latestVersions(libraries.join())));
     
-        return processLibrariesData(data);
+        return processLibrariesData(data ? data.libraries : []);
     }
 
     async fetchFullLibraryMetadata(libraryName) {
-        const { data } = await this.graphQL.query(trimQuery(fullLibraryMetadata(libraryName)));
+        const { data } = await this.requestQuery(trimQuery(fullLibraryMetadata(libraryName)));
 
         return processFullLibraryData(data);
     }

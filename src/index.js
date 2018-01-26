@@ -7,14 +7,14 @@ import LibraryInfoPage from './pages/LibraryInfoPage';
 import AccountService from './services/AccountService/index';
 
 let accountService = new AccountService();
-accountService.init();
-// accountService.checkLogin();
-
-ReactDOM.render(
-    <BrowserRouter>
-        <div>
-            <Route exact path="/" component={App} />
-            <Route path="/:libraryName" component={LibraryInfoPage} />
-        </div>
-    </BrowserRouter>,
-    document.getElementById('root'));
+accountService.init( () => {
+    ReactDOM.render(
+        <BrowserRouter>
+            <div>
+                <Route exact path="/" component={App} />
+                <Route path="/:libraryName" component={LibraryInfoPage} />
+            </div>
+        </BrowserRouter>,
+        document.getElementById('root'));
+    
+});

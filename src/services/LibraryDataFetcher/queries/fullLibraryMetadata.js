@@ -1,6 +1,6 @@
 export default library => `
 {
-    library(name: "${library}", source: github) {
+    library(name: "${library}", token: "$token") {
       name
       current_version
       source

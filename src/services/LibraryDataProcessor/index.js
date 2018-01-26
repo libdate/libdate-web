@@ -1,9 +1,15 @@
 import _ from 'lodash';
+
 export default function processLibaryData(library) {
-    let processedLibrary = library;    
+    let processedLibrary = _.clone(library);    
 
-    library.version_data.date = processVersionDate(library.version_data.date);
-
+    if (library.version_data) {
+        processedLibrary.version_data.date = processVersionDate(library.version_data.date);
+    } else {
+        // TODO: Fix non existing version data
+        processedLibrary.version_data = {date: new Date()};
+    }
+    
     return processedLibrary;
 }
 
@@ -23,5 +29,5 @@ export function processVersionDate(date) {
 }
 
 export function processLibrariesData(libraries) {
-    return _.mapValues(libraries, processLibaryData);
+    return libraries.map(processLibaryData);
 }

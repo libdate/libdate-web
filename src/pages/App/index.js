@@ -17,7 +17,7 @@ class App extends Component {
     this.libraryDataFetcher = new LibraryDataFetcher();
 
     this.state = {
-      versions: {},
+      versions: [],
       libraries: this.subscriptionStorageService.getSubscriptions() || [],
       libraryInput: '',
       fetching: false,
@@ -62,7 +62,7 @@ class App extends Component {
     const newLibraries = [...libraries, libraryInput.toLowerCase()];
 
     this.subscriptionStorageService.saveSubscriptions(newLibraries);
-    this.setState({ libraries: newLibraries });
+    this.setState({ libraries: newLibraries, libraryInput: ''});
   }
 
   componentDidCatch(error) {
@@ -106,7 +106,7 @@ class App extends Component {
           <button onClick={this.addLibrary}>Add</button>
         </section>
         <ul className='latest-libary-versions-list'>
-          {_.values(versions).map(this.renderLibraryItem)}
+          {versions.map(this.renderLibraryItem)}
         </ul>
       </div >
     );
