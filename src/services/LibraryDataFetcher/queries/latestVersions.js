@@ -12,7 +12,6 @@ export const LIBRARY_FRAGMENT = `
 fragment LIBRARY_VERSION on Library { 
       name
       current_version
-      source
       description
       version_data {
         date
