@@ -12,7 +12,7 @@ export default class NotificationsSerivce {
         const messaging = this.getMessaging();
 
         return messaging.getToken()
-            .then(function (currentToken) {
+            .then((currentToken) => {
             if (currentToken) {
                 this.onMessageReceived();
                 return Promise.resolve(currentToken);

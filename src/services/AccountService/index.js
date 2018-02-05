@@ -2,6 +2,7 @@ import 'firebase/firestore';
 import { GithubTokenService } from '../GithubTokenService/index';
 import NotificationsSerivce from '../NotificationsService';
 import FirebaseService from '../FirebaseService';
+import _ from 'lodash';
 
 export default class AccountService {
     constructor(onLogin, _window = window) {
@@ -79,9 +80,10 @@ export default class AccountService {
             .catch(error => console.error(error));
     }
 
-    finishInitilization(githubToken, onFinish) {
+    finishInitilization(githubToken, onFinish = _.noop) {
         this.tokenService.saveToken(githubToken);
         this.hasInitialized = true;
+        this.notificationsService.onMessageReceived();
         this.registerPushTokenRefresh();
 
         onFinish();
