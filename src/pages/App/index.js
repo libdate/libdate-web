@@ -16,6 +16,7 @@ class App extends Component {
     super(props);
     this.subscriptionStorageService = new SubscriptionStorageService();
     this.libraryDataFetcher = new LibraryDataFetcher();
+    this.accountService = new AccountService();
 
     this.state = {
       versions: [],
@@ -32,7 +33,7 @@ class App extends Component {
 
   componentDidMount() {
     if (!_.isEmpty(this.state.libraries)) {
-      AccountService.getInstance().init(() => {
+      this.accountService.init(() => {
         this.updateVersionData(this.state.libraries);
       });
     }

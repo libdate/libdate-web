@@ -1,67 +1,46 @@
-import * as firebase from 'firebase';
 import 'firebase/firestore';
 import { GithubTokenService } from '../GithubTokenService/index';
-
-const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyDCK_YCAZLXMnP6InQUGFXAfuaqDVPyXXU",
-    authDomain: "libdate-a54ca.firebaseapp.com",
-    databaseURL: "https://libdate-a54ca.firebaseio.com",
-    projectId: "libdate-a54ca",
-    storageBucket: "libdate-a54ca.appspot.com",
-    messagingSenderId: "53983860863"
-};
+import NotificationsSerivce from '../NotificationsService';
+import FirebaseService from '../FirebaseService';
 
 export default class AccountService {
     constructor(onLogin, _window = window) {
         this.window = _window;
         this.tokenService = new GithubTokenService();
-        this.hasInitialized = false;
-    }
-
-    static getInstance() {
-        if (!AccountService.__instance) {
-            AccountService.__instance = new AccountService();
-        }
-
-        return AccountService.__instance;
+        this.notificationsService = new NotificationsSerivce();
     }
 
     init(onFinish) {
         if (!this.hasInitialized) {
-            firebase.initializeApp(FIREBASE_CONFIG);
-            this.db = firebase.firestore();
-            window.firebase = firebase;
-
-            firebase.auth().onAuthStateChanged(() => this.checkLogin(onFinish));
-        } else {
-            onFinish();
+            this.firebase = FirebaseService.getFirebase();
+            this.db = this.firebase.firestore();
+            this.firebase.auth().onAuthStateChanged(() => this.checkLogin(onFinish));
         }
     }
 
     checkLogin(onFinish) {
-        let user = firebase.auth().currentUser;
+        let user = this.firebase.auth().currentUser;
 
-        firebase.auth().getRedirectResult()
+        this.firebase.auth().getRedirectResult()
             .then(result => {
                 if (result.user) {
                     this.createUser(result).then(onFinish);
                 } else if (!user) {
                     this.login();
                 } else {
-                    this.getUserToken(user).then(token => this.finishInitilization(token));
-                    onFinish();
+                    this.getUserToken(user).then(token => this.finishInitilization(token, onFinish));
                 }
             });
     }
 
     login() {
-        var githubProvider = new firebase.auth.GithubAuthProvider();
+        var githubProvider = new this.firebase.auth.GithubAuthProvider();
 
         githubProvider.addScope('repo');
         githubProvider.addScope('public_repo');
 
-        return firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-            .then(() => firebase.auth().signInWithRedirect(githubProvider))
+        return this.firebase.auth().setPersistence(this.firebase.auth.Auth.Persistence.LOCAL)
+            .then(() => this.firebase.auth().signInWithRedirect(githubProvider))
             .catch(error => {
                 console.error(error);
             });
@@ -75,7 +54,8 @@ export default class AccountService {
                 let user = userRef.data();
                 return Promise.resolve(user.githubToken);
             } else {
-                Promise.reject('User does not exist');
+                Promise.reject('User does not exist', uid);
+                this.login();
             }
         });
     }
@@ -85,19 +65,38 @@ export default class AccountService {
         let githubToken = result.credential.accessToken;
         let uid = result.user.uid;
 
-        return this.db.collection('users').doc(uid).set({
-            uid,
-            user,
-            githubToken,
-        }).then(() => {
-            this.finishInitilization(githubToken);
-        }).catch(error => console.error(error));
+        return this.notificationsService.getPushToken()
+            .then(pushToken =>
+                this.db.collection('users').doc(uid).set({
+                    uid,
+                    user,
+                    pushToken,
+                    githubToken,
+                }))
+            .then(() => {
+                this.finishInitilization(githubToken);
+            })
+            .catch(error => console.error(error));
     }
 
-    finishInitilization(githubToken) {
+    finishInitilization(githubToken, onFinish) {
         this.tokenService.saveToken(githubToken);
         this.hasInitialized = true;
+        this.registerPushTokenRefresh();
+
+        onFinish();
+    }
+
+    registerPushTokenRefresh() {
+        this.notificationsService.onTokenRefresh(token => {
+            this.savePushToken(this.firebase.auth().user, token);
+        });
+    }
+
+    savePushToken(user, pushToken) {
+        console.log('saving new token');
+        return this.db.collection('users').doc(user.uid).update({
+            pushToken
+        });
     }
 }
-
-AccountService.__instance = null;
